@@ -1,0 +1,18 @@
+[
+    {
+        "caption": "Google: Search Selection",
+        "command": "google_search_selection"
+    },
+    {
+        "caption": "Google: Search Selection (with Hints)",
+        "command": "google_search_selection_with_hints"
+    },
+    {
+        "caption": "Google: Search from Input",
+        "command": "google_search_from_input"
+    },
+    {
+        "caption": "Google: Search History",
+        "command": "google_search_history"
+    }
+]

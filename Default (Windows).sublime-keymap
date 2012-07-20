@@ -1,0 +1,5 @@
+[
+	{
+		"keys": ["ctrl+alt+g"], "command": "google_search_selection_with_hints"
+	}
+]
