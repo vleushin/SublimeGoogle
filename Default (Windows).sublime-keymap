@@ -1,5 +1,8 @@
 [
-	{
-		"keys": ["ctrl+alt+g"], "command": "google_search_selection_with_hints"
-	}
+    {
+        "keys": ["ctrl+alt+g"], "command": "google_search_selection_with_hints"
+    },
+    {
+        "keys": ["ctrl+alt+h"], "command": "google_search_history"
+    }
 ]

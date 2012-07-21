@@ -1,4 +1,10 @@
 {
     "google_url": "https://www.google.com/search?q=%s",
-    "hints": ["site:wikipedia.org", "site:stackoverflow.com"]
+
+    "hints": [
+        "site:wikipedia.org",
+        "site:stackoverflow.com"
+    ],
+    
+    "history_size": 50
 }

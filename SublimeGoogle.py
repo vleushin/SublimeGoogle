@@ -8,17 +8,20 @@ def settings_filename():
 def settings():
     return sublime.load_settings(settings_filename())
 
+def history():
+    return settings().get('history')[:settings().get('history_size')] or []
+
+def add_query_to_history(query):
+    new_history = history()
+    if query in new_history:
+        new_history.pop(new_history.index(query))
+    new_history.insert(0, query)
+    settings().set('history', new_history)
+    sublime.save_settings(settings_filename())
+
 def make_query(view):
     terms = [view.word(selection) if selection.empty() else selection for selection in view.sel()]
     return ' '.join(map(view.substr, terms))
-
-def add_query_to_history(query):
-    history = settings().get('history') or []
-    if query in history:
-        history.pop(history.index(query))
-    history.insert(0, query)
-    settings().set('history', history)
-    sublime.save_settings(settings_filename())
 
 def launch_browser(query):
     query_for_search = query.replace(' ', '%20').replace('"', '%22')
@@ -52,8 +55,8 @@ class GoogleSearchFromInputCommand(sublime_plugin.WindowCommand):
 
 class GoogleSearchHistoryCommand(sublime_plugin.WindowCommand):
     def run(self):
-        self.window.show_quick_panel(settings().get('history'), self.on_done)
+        self.window.show_quick_panel(history(), self.on_done)
 
     def on_done(self, picked):
         if picked >= 0:
-            launch_browser(settings().get('history')[picked])
+            launch_browser(history()[picked])
