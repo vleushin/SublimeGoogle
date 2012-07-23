@@ -2,8 +2,10 @@
     "google_url": "https://www.google.com/search?q=%s",
 
     "hints": [
-        "site:wikipedia.org",
-        "site:stackoverflow.com"
+        "%s",
+        "\"%s\"",
+        "site:wikipedia.org %s",
+        "site:stackoverflow.com %s"
     ],
     
     "history_size": 50
