@@ -2,48 +2,45 @@ import sublime
 import sublime_plugin
 import webbrowser
 
-def settings_filename():
-    return '%s.sublime-settings' % __name__
+def settings_get(name):
+    return sublime.load_settings('%s.sublime-settings' % __name__).get(name)
 
-def settings():
-    return sublime.load_settings(settings_filename())
+def settings_set(name, value):
+    return sublime.load_settings('%s.sublime-settings' % __name__).set(name, value)
 
-def history():
-    return settings().get('history')[:settings().get('history_size')] or []
+def get_history():
+    return settings_get('history')[:settings_get('history_size')] or []
 
 def add_query_to_history(query):
-    new_history = history()
-    if query in new_history:
-        new_history.pop(new_history.index(query))
-    new_history.insert(0, query)
-    settings().set('history', new_history)
-    sublime.save_settings(settings_filename())
+    history = get_history()
+    if query in history:
+        history.pop(history.index(query))
+    history.insert(0, query)
+    settings_set('history', history)
+    sublime.save_settings('%s.sublime-settings' % __name__)
 
 def make_query(view):
     terms = [view.word(selection) if selection.empty() else selection for selection in view.sel()]
     return ' '.join(map(view.substr, terms))
 
 def launch_browser(query):
-    query_for_search = query.replace(' ', '%20').replace('"', '%22')
-    webbrowser.open_new_tab(settings().get('google_url') % query_for_search)
+    query_for_browser = query.replace(' ', '%20').replace('"', '%22')
+    webbrowser.open_new_tab(settings_get('google_url') % query_for_browser)
     add_query_to_history(query);
-
 
 class GoogleSearchSelectionCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         launch_browser(make_query(self.view))
 
-
 class GoogleSearchSelectionWithHintsCommand(sublime_plugin.WindowCommand):
     def run(self):
         query = make_query(self.window.active_view())
-        self.hints = [query, '"%s"' % query] + ['%s %s' % (hint, query) for hint in settings().get('hints')]
+        self.hints = [hint % query for hint in settings_get('hints')]
         self.window.show_quick_panel(self.hints, self.on_done)
 
     def on_done(self, picked):
         if picked >= 0:
             launch_browser(self.hints[picked])
-
 
 class GoogleSearchFromInputCommand(sublime_plugin.WindowCommand):
     def run(self):
@@ -52,11 +49,10 @@ class GoogleSearchFromInputCommand(sublime_plugin.WindowCommand):
     def on_done(self, query):
         launch_browser(query)
 
-
 class GoogleSearchHistoryCommand(sublime_plugin.WindowCommand):
     def run(self):
-        self.window.show_quick_panel(history(), self.on_done)
+        self.window.show_quick_panel(get_history(), self.on_done)
 
     def on_done(self, picked):
         if picked >= 0:
-            launch_browser(history()[picked])
+            launch_browser(get_history()[picked])
